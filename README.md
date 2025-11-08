@@ -25,12 +25,31 @@ Install them with:
 
 ```bash
 sudo apt update
-sudo apt install x11-xserver-utils xinput libglib2.0-bin
+sudo apt install x11-xserver-utils xinput libglib2.0-bin xserver-xorg-input-wacom
 ```
 
-### Helpful optional packages
-- `openrgb`: Required for the advanced RGB modes in `rgb_control.sh`. Grab the AppImage or .deb from https://openrgb.org (or `sudo add-apt-repository ppa:thopiekar/openrgb && sudo apt install openrgb` on Ubuntu).
-- `xserver-xorg-input-wacom`: Supplies `xsetwacom`, which `fix_touch.sh` uses when present. Install with `sudo apt install xserver-xorg-input-wacom`.
+### OpenRGB installation
+
+OpenRGB is required for advanced RGB modes in `rgb_control.sh`. Installation varies by Ubuntu version:
+
+**Ubuntu 22.04:**
+```bash
+sudo add-apt-repository ppa:thopiekar/openrgb
+sudo apt update
+sudo apt install openrgb
+```
+
+**Ubuntu 24.04:**
+> [!NOTE]
+> The OpenRGB PPA does not support Ubuntu 24.04 yet. Install from the official release:
+
+```bash
+curl -L -o /tmp/openrgb.deb https://openrgb.org/releases/release_0.9/openrgb_0.9_amd64_bookworm_b5f46e3.deb
+sudo dpkg -i /tmp/openrgb.deb
+sudo apt install -f
+```
+
+Alternatively, download the latest `.deb` or AppImage from [openrgb.org](https://openrgb.org).
 
 
 ### Electron UI / build prerequisites
@@ -41,14 +60,33 @@ sudo apt install x11-xserver-utils xinput libglib2.0-bin
     ```
 - **Electron dependencies**: Run `npm install` in the repo to pull `electron`, `electron-builder`, and `electron-store`.
 - **AppImage runtime**: Ubuntu 22.04/24.04 requires `libfuse2` to run the built AppImage (`sudo apt install libfuse2`).
+- **Sandbox permissions**: After npm install, run:
+    ```bash
+    sudo chown root:root node_modules/electron/dist/chrome-sandbox
+    sudo chmod 4755 node_modules/electron/dist/chrome-sandbox
+    ```
 - After the above, the UI works with `npm start`; distributables come from `npm run build-appimage` / `npm run build-deb`.
+
+### Permissions setup (required for Electron UI)
+
+> [!IMPORTANT]
+> To use the Electron UI or run control scripts without `sudo`, you must configure udev rules for hardware access.
+
+Run the setup script once:
+
+```bash
+./setup_permissions.sh
+```
+
+This installs udev rules that grant non-root access to keyboard and ScreenPad brightness controls. Permissions persist across reboots.
 
 ## Key Scripts
 
 | Script | Purpose | Elevation |
 | --- | --- | --- |
-| `rgb_control.sh` | Firmware backlight levels (0-3) with OpenRGB fallbacks for effects | Required only when writing `/sys/class/leds/...` |
-| `screenpad_control.sh` | Get/Set ScreenPad brightness, toggle the panel, inspect/reset touch | Required for brightness writes; other subcommands run unprivileged |
+| `setup_permissions.sh` | Installs udev rules for non-root hardware access | Run once (prompts for sudo) |
+| `rgb_control.sh` | Firmware backlight levels (0-3) with OpenRGB fallbacks for effects | Not required after setup |
+| `screenpad_control.sh` | Get/Set ScreenPad brightness, toggle the panel, inspect/reset touch | Not required after setup |
 | `fix_touch.sh` | Disables GNOME on-screen keyboard triggers and refreshes the ELAN device | Not required |
 | `immediate_touch_fix.sh` | One-shot touch tuning plus optional launcher creation | Not required (writes to your dotfiles) |
 | `test_touch.sh` | Reports ScreenPad / touch diagnostics | Not required |
@@ -58,12 +96,15 @@ sudo apt install x11-xserver-utils xinput libglib2.0-bin
 ## Quick Usage
 
 ```bash
-# RGB firmware levels (sudo needed for /sys writes)
-sudo ./rgb_control.sh basic 2
+# Run permissions setup first (one-time)
+./setup_permissions.sh
+
+# RGB firmware levels (no sudo needed after setup)
+./rgb_control.sh basic 2
 
 # ScreenPad brightness
 ./screenpad_control.sh brightness get
-sudo ./screenpad_control.sh brightness set 120
+./screenpad_control.sh brightness set 120
 
 # Touch checks
 ./screenpad_control.sh touch info
@@ -84,7 +125,7 @@ sudo ./screenpad_control.sh brightness set 120
 - If OpenRGB fails, the script automatically reverts to firmware level control.
 
 **ScreenPad brightness / display**
-- `./screenpad_control.sh brightness get` works without sudo; `set`, `up`, `down` require sudo.
+- `./screenpad_control.sh brightness get|set|up|down` works without sudo after running `setup_permissions.sh`.
 - `./screenpad_control.sh display status` surfaces the current xrandr layout; `display toggle` can turn the ScreenPad on/off.
 
 **Touch behavior**
@@ -99,7 +140,7 @@ npm install
 npm start
 ```
 
-The Electron UI runs the same scripts through IPC; no additional privileges are required beyond whatever the script itself needs.
+The Electron UI runs the same scripts through IPC. After running `setup_permissions.sh`, no sudo prompts are needed.
 
 ---
 

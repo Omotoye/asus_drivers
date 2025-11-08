@@ -1,0 +1,5 @@
+# ASUS keyboard backlight control
+SUBSYSTEM=="leds", KERNEL=="asus::kbd_backlight", ACTION=="add", RUN+="/bin/chmod 666 /sys/class/leds/asus::kbd_backlight/brightness"
+
+# ASUS ScreenPad backlight control
+SUBSYSTEM=="backlight", KERNEL=="asus_screenpad", ACTION=="add", RUN+="/bin/chmod 666 /sys/class/backlight/asus_screenpad/brightness"
