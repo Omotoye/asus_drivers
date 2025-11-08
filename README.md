@@ -10,6 +10,39 @@ Shell tools and an optional Electron UI for managing RGB lighting, ScreenPad Plu
 - **OS**: Ubuntu 22.04 / 24.04 (GNOME session). Other distros may work but are not covered.
 - **Runtime dependencies**: `sudo`, `xrandr`, `xinput`, `bash`, optional `openrgb` for advanced lighting.
 
+## Installation Requirements
+
+### Base CLI dependencies (Ubuntu)
+These packages provide the commands every shell script in this repo calls. Install them once:
+
+| Utility | Ubuntu package | Used by |
+| --- | --- | --- |
+| `xrandr` | `x11-xserver-utils` | ScreenPad display toggles, diagnostics |
+| `xinput` | `xinput` | Touch resets, tests, immediate fixes |
+| `gsettings` | `libglib2.0-bin` | GNOME accessibility toggles, keybindings |
+
+Install them with:
+
+```bash
+sudo apt update
+sudo apt install x11-xserver-utils xinput libglib2.0-bin
+```
+
+### Helpful optional packages
+- `openrgb`: Required for the advanced RGB modes in `rgb_control.sh`. Grab the AppImage or .deb from https://openrgb.org (or `sudo add-apt-repository ppa:thopiekar/openrgb && sudo apt install openrgb` on Ubuntu).
+- `xserver-xorg-input-wacom`: Supplies `xsetwacom`, which `fix_touch.sh` uses when present. Install with `sudo apt install xserver-xorg-input-wacom`.
+
+
+### Electron UI / build prerequisites
+- **Node.js + npm**: The control center needs Node.js ≥ 18. Install via NodeSource (example below) or `nvm`.
+    ```bash
+    curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+    sudo apt install nodejs build-essential
+    ```
+- **Electron dependencies**: Run `npm install` in the repo to pull `electron`, `electron-builder`, and `electron-store`.
+- **AppImage runtime**: Ubuntu 22.04/24.04 requires `libfuse2` to run the built AppImage (`sudo apt install libfuse2`).
+- After the above, the UI works with `npm start`; distributables come from `npm run build-appimage` / `npm run build-deb`.
+
 ## Key Scripts
 
 | Script | Purpose | Elevation |
