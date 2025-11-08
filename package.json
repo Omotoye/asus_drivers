@@ -1,0 +1,101 @@
+{
+  "name": "asus-zephyrus-control-center",
+  "version": "1.0.0",
+  "description": "ASUS Zephyrus Duo Driver Control Center - RGB, ScreenPad, and Touch Management",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "NODE_ENV=development electron .",
+    "build": "electron-builder",
+    "build-linux": "electron-builder --linux",
+    "build-appimage": "electron-builder --linux AppImage",
+    "build-deb": "electron-builder --linux deb",
+    "build-all": "electron-builder --linux AppImage deb",
+    "pack": "electron-builder --dir",
+    "dist": "npm run build",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "keywords": [
+    "ASUS",
+    "Zephyrus",
+    "ROG",
+    "RGB",
+    "ScreenPad",
+    "Touch",
+    "Driver",
+    "Control",
+    "Linux",
+    "Ubuntu"
+  ],
+  "author": {
+    "name": "ASUS Zephyrus User",
+    "email": "user@example.com"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/user/asus-control-center",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/user/asus-control-center.git"
+  },
+  "build": {
+    "appId": "com.asus.zephyrus.control",
+    "productName": "ASUS Control Center",
+    "copyright": "Copyright © 2024 ASUS Zephyrus Control",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer.js",
+      "asus_control_center.html",
+      "assets/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "linux": {
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": ["x64"]
+        },
+        {
+          "target": "deb",
+          "arch": ["x64"]
+        }
+      ],
+      "category": "System",
+      "description": "Control center for ASUS Zephyrus Duo laptop features",
+      "desktop": {
+        "Name": "ASUS Control Center",
+        "Comment": "Manage RGB, ScreenPad, and Touch features",
+        "Categories": "System;Settings;HardwareSettings;",
+        "Keywords": "ASUS;RGB;ScreenPad;Touch;Driver;Control;",
+        "StartupNotify": "true"
+      },
+      "icon": "assets/icon.png"
+    },
+    "appImage": {
+      "license": "LICENSE"
+    },
+    "deb": {
+      "depends": [
+        "openrgb"
+      ],
+      "recommends": [
+        "gnome-terminal"
+      ]
+    },
+    "publish": null
+  },
+  "devDependencies": {
+    "electron": "^22.0.0",
+    "electron-builder": "^24.0.0"
+  },
+  "dependencies": {
+    "electron-store": "^8.1.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

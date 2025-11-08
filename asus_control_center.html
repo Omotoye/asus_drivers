@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASUS Zephyrus Duo Control Center</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --asus-orange: #ff6600;
+            --asus-blue: #00d4ff;
+            --asus-red: #ff0040;
+            --asus-green: #00ff88;
+            --dark-bg: #0a0a0a;
+            --card-bg: #1a1a1a;
+            --border-color: #333;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --text-accent: #ff6600;
+            --glow: 0 0 20px rgba(255, 102, 0, 0.3);
+            --blue-glow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: linear-gradient(90deg, var(--dark-bg) 0%, #1a1a1a 50%, var(--dark-bg) 100%);
+            border-bottom: 2px solid var(--asus-orange);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 102, 0, 0.1), transparent);
+            animation: scan 3s infinite;
+        }
+
+        @keyframes scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--asus-orange);
+            text-shadow: var(--glow);
+            letter-spacing: 3px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-top: 5px;
+            font-weight: 300;
+        }
+
+        .system-status {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--asus-green);
+            box-shadow: 0 0 10px var(--asus-green);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .control-panel {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .control-panel:hover {
+            border-color: var(--asus-orange);
+            box-shadow: var(--glow);
+            transform: translateY(-2px);
+        }
+
+        .control-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--asus-orange), var(--asus-blue), var(--asus-red), var(--asus-green));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .control-panel:hover::before {
+            opacity: 1;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .panel-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, var(--asus-orange), var(--asus-blue));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            box-shadow: var(--glow);
+        }
+
+        .panel-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-accent);
+        }
+
+        .control-group {
+            margin-bottom: 25px;
+        }
+
+        .control-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .control-button {
+            background: linear-gradient(45deg, #2a2a2a, #3a3a3a);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .control-button:hover {
+            background: linear-gradient(45deg, var(--asus-orange), #ff8833);
+            border-color: var(--asus-orange);
+            box-shadow: var(--glow);
+            transform: translateY(-1px);
+        }
+
+        .control-button.active {
+            background: linear-gradient(45deg, var(--asus-orange), var(--asus-red));
+            border-color: var(--asus-orange);
+            box-shadow: var(--glow);
+        }
+
+        .slider-container {
+            position: relative;
+            margin: 15px 0;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #333;
+            outline: none;
+            position: relative;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--asus-orange), var(--asus-blue));
+            cursor: pointer;
+            box-shadow: var(--glow);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--asus-orange), var(--asus-blue));
+            cursor: pointer;
+            box-shadow: var(--glow);
+            border: none;
+        }
+
+        .slider-value {
+            position: absolute;
+            right: 0;
+            top: -25px;
+            background: var(--asus-orange);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-display {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            font-family: 'Orbitron', monospace;
+            font-size: 0.9rem;
+        }
+
+        .color-picker-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin: 15px 0;
+        }
+
+        .color-picker {
+            width: 50px;
+            height: 40px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: var(--asus-orange);
+        }
+
+        .preset-colors {
+            display: flex;
+            gap: 8px;
+        }
+
+        .preset-color {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .preset-color:hover {
+            border-color: white;
+            transform: scale(1.1);
+        }
+
+        .logs-container {
+            grid-column: 1 / -1;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .logs-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .logs-content {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            height: 200px;
+            overflow-y: auto;
+            font-family: 'Orbitron', monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 2px 0;
+        }
+
+        .log-timestamp {
+            color: var(--asus-blue);
+        }
+
+        .log-success {
+            color: var(--asus-green);
+        }
+
+        .log-error {
+            color: var(--asus-red);
+        }
+
+        .log-info {
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                padding: 15px;
+                gap: 20px;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #333;
+            border-radius: 50%;
+            border-top-color: var(--asus-orange);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div>
+                <div class="logo">ASUS CONTROL</div>
+                <div class="subtitle">Zephyrus Duo Driver Management</div>
+            </div>
+            <div class="system-status">
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span>RGB Ready</span>
+                </div>
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span>ScreenPad Online</span>
+                </div>
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span>Touch Optimized</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <!-- RGB Keyboard Control Panel -->
+        <div class="control-panel">
+            <div class="panel-header">
+                <div class="panel-icon">⌨️</div>
+                <div class="panel-title">RGB KEYBOARD</div>
+            </div>
+            
+            <div class="control-group">
+                <label class="control-label">Backlight Level</label>
+                <div class="button-group">
+                    <button class="control-button" onclick="setKeyboardLevel(0)">OFF</button>
+                    <button class="control-button" onclick="setKeyboardLevel(1)">DIM</button>
+                    <button class="control-button" onclick="setKeyboardLevel(2)">MED</button>
+                    <button class="control-button active" onclick="setKeyboardLevel(3)">BRIGHT</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">RGB Modes (OpenRGB)</label>
+                <div class="button-group">
+                    <button class="control-button" onclick="setRGBMode('static')">STATIC</button>
+                    <button class="control-button" onclick="setRGBMode('rainbow')">RAINBOW</button>
+                    <button class="control-button" onclick="setRGBMode('breathing')">BREATHING</button>
+                    <button class="control-button" onclick="setRGBMode('reactive')">REACTIVE</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">Advanced Effects</label>
+                <div class="button-group">
+                    <button class="control-button" onclick="setRGBMode('spectrum')">SPECTRUM</button>
+                    <button class="control-button" onclick="setRGBMode('starry')">STARRY</button>
+                    <button class="control-button" onclick="setRGBMode('rain')">RAIN</button>
+                    <button class="control-button" onclick="setRGBMode('comet')">COMET</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">Special Effects</label>
+                <div class="button-group">
+                    <button class="control-button" onclick="setRGBMode('flash')">FLASH</button>
+                    <button class="control-button" onclick="setRGBMode('ripple')">RIPPLE</button>
+                    <button class="control-button" onclick="setRGBMode('laser')">LASER</button>
+                    <button class="control-button" onclick="setRGBMode('off')">OFF</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">Custom Color</label>
+                <div class="color-picker-container">
+                    <input type="color" class="color-picker" id="rgbColorPicker" value="#ff6600" onchange="setCustomColor(this.value)">
+                    <div class="preset-colors">
+                        <div class="preset-color" style="background: #ff0000;" onclick="setCustomColor('#ff0000')"></div>
+                        <div class="preset-color" style="background: #00ff00;" onclick="setCustomColor('#00ff00')"></div>
+                        <div class="preset-color" style="background: #0000ff;" onclick="setCustomColor('#0000ff')"></div>
+                        <div class="preset-color" style="background: #ff6600;" onclick="setCustomColor('#ff6600')"></div>
+                        <div class="preset-color" style="background: #ff00ff;" onclick="setCustomColor('#ff00ff')"></div>
+                        <div class="preset-color" style="background: #00ffff;" onclick="setCustomColor('#00ffff')"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="status-display" id="keyboardStatus">
+                Status: Keyboard backlight at level 3/3
+            </div>
+        </div>
+
+        <!-- ScreenPad Control Panel -->
+        <div class="control-panel">
+            <div class="panel-header">
+                <div class="panel-icon">📱</div>
+                <div class="panel-title">SCREENPAD PLUS</div>
+            </div>
+            
+            <div class="control-group">
+                <label class="control-label">Brightness Control</label>
+                <div class="slider-container">
+                    <input type="range" min="0" max="235" value="150" class="slider" id="brightnessSlider" oninput="setBrightness(this.value)">
+                    <span class="slider-value" id="brightnessValue">150/235</span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">Quick Brightness</label>
+                <div class="button-group">
+                    <button class="control-button" onclick="setBrightness(0)">OFF</button>
+                    <button class="control-button" onclick="setBrightness(59)">25%</button>
+                    <button class="control-button" onclick="setBrightness(118)">50%</button>
+                    <button class="control-button" onclick="setBrightness(176)">75%</button>
+                    <button class="control-button" onclick="setBrightness(235)">MAX</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">Display Control</label>
+                <div class="button-group">
+                    <button class="control-button" onclick="toggleScreenPad()">TOGGLE ON/OFF</button>
+                    <button class="control-button" onclick="showDisplayInfo()">DISPLAY INFO</button>
+                </div>
+            </div>
+
+            <div class="status-display" id="screenpadStatus">
+                Status: ScreenPad brightness at 64%
+            </div>
+        </div>
+
+        <!-- Touch Configuration Panel -->
+        <div class="control-panel">
+            <div class="panel-header">
+                <div class="panel-icon">👆</div>
+                <div class="panel-title">TOUCH CONTROL</div>
+            </div>
+            
+            <div class="control-group">
+                <label class="control-label">Touch Optimization</label>
+                <div class="button-group">
+                    <button class="control-button" onclick="resetTouch()">RESET TOUCH</button>
+                    <button class="control-button" onclick="fixTouchBehavior()">FIX SCROLLING</button>
+                    <button class="control-button" onclick="showTouchInfo()">DEVICE INFO</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">Browser Optimization</label>
+                <div class="button-group">
+                    <button class="control-button" onclick="launchOptimizedBrowser()">LAUNCH BROWSER</button>
+                    <button class="control-button" onclick="testTouch()">TEST TOUCH</button>
+                </div>
+            </div>
+
+            <div class="status-display" id="touchStatus">
+                Status: Touch device ELAN9009 - Optimized for scrolling
+            </div>
+        </div>
+
+        <!-- System Monitoring Panel -->
+        <div class="control-panel">
+            <div class="panel-header">
+                <div class="panel-icon">🖥️</div>
+                <div class="panel-title">SYSTEM MONITOR</div>
+            </div>
+            
+            <div class="control-group">
+                <label class="control-label">Hardware Status</label>
+                <div class="button-group">
+                    <button class="control-button" onclick="refreshStatus()">REFRESH STATUS</button>
+                    <button class="control-button" onclick="runDiagnostics()">DIAGNOSTICS</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">Quick Actions</label>
+                <div class="button-group">
+                    <button class="control-button" onclick="reloadDrivers()">RELOAD DRIVERS</button>
+                    <button class="control-button" onclick="openTerminal()">OPEN TERMINAL</button>
+                </div>
+            </div>
+
+            <div class="status-display" id="systemStatus">
+                System: Ubuntu 22.04 | Displays: 2 active | Touch: Working
+            </div>
+        </div>
+    </div>
+
+    <!-- Logs Panel -->
+    <div class="logs-container">
+        <div class="logs-header">
+            <div class="panel-header">
+                <div class="panel-icon">📋</div>
+                <div class="panel-title">SYSTEM LOGS</div>
+            </div>
+            <button class="control-button" onclick="clearLogs()">CLEAR LOGS</button>
+        </div>
+        <div class="logs-content" id="logsContent">
+            <div class="log-entry">
+                <span class="log-timestamp">[12:34:56]</span> 
+                <span class="log-success">✓ ASUS Control Center initialized</span>
+            </div>
+            <div class="log-entry">
+                <span class="log-timestamp">[12:34:57]</span> 
+                <span class="log-info">• Keyboard backlight: 3/3 levels available</span>
+            </div>
+            <div class="log-entry">
+                <span class="log-timestamp">[12:34:58]</span> 
+                <span class="log-info">• ScreenPad: 3840x1100 @ DisplayPort-1-2</span>
+            </div>
+            <div class="log-entry">
+                <span class="log-timestamp">[12:34:59]</span> 
+                <span class="log-info">• Touch device: ELAN9009:00 - Optimized</span>
+            </div>
+            <div class="log-entry">
+                <span class="log-timestamp">[12:35:00]</span> 
+                <span class="log-success">✓ All systems operational</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>

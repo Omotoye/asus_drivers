@@ -1,0 +1,14 @@
+# Node/Electron artifacts
+node_modules/
+dist/
+*.log
+npm-debug.log*
+
+# Editor junk
+.DS_Store
+Thumbs.db
+
+# OS/system files
+.Trash-*
+*.swp
+*.swo
